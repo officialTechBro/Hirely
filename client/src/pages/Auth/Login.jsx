@@ -3,8 +3,12 @@ import { useState } from "react"
 import { motion } from "framer-motion"
 import { AlertCircle, CheckCircle, Eye, EyeOff, Loader, Lock, Mail } from "lucide-react"
 import { validateEmail } from "../../utils/helper"
+import axiosInstance from "../../utils/axiosInstance"
+import { API_PATHS } from "../../utils/apiPath"
+import { useAuth } from "../../context/AuthContext"
 
 const Login = () => {
+    const {login} = useAuth()
     const [formData, setFormData] = useState({
         email: "",
         password: "",
@@ -24,7 +28,7 @@ const Login = () => {
 
     const validatePassword = (password) => {
         if (!password) return 'Password is required'
-        return ' '
+        return ""
     }
 
     const handleInputChange = (e) => {
@@ -40,7 +44,7 @@ const Login = () => {
                 ...prev,
                 errors: {
                     ...prev.errors,
-                    [name]: ''
+                    [name]: ""
                 }
             }))
         }
@@ -65,7 +69,7 @@ const Login = () => {
         return Object.keys(errors).length === 0
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit =  async (e) => {
         e.preventDefault()
 
         if (!validateForm()) return
@@ -78,6 +82,41 @@ const Login = () => {
         // Login API call
         try {
             // API
+            const response = await axiosInstance.post(API_PATHS.AUTH.LOGIN, {
+                email: formData.email,
+                password: formData.password,
+                rememberMe: formData.rememberMe,
+            })
+
+            setFormState(prev => ({
+                ...prev,
+                loading: false,
+                success: true,
+                errors: {}
+            }))
+
+            const {token, role} = response.data
+
+            if (token) {
+                login(response.data, token)
+
+                //Redirect based on role
+                setTimeout(() => {
+                    window.location.href = 
+                        role === "employer"
+                            ? "/employer-dashboard"
+                            : "/find-jobs"
+                }, 2000)
+
+
+                //Redirect based on user-role
+                setTimeout(() => {
+                    const redirectPath = user.role === 'employer'
+                        ? "/employer-dashboard"
+                        : "/find-jobs"
+                    window.location.href = redirectPath
+                }, 1500)
+            }
         } catch (error) {
             setFormState(prev => ({
             ...prev,

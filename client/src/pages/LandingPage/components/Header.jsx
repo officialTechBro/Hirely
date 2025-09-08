@@ -2,10 +2,10 @@
 import {motion} from 'framer-motion'
 import {Briefcase} from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../../context/AuthContext'
 
 const Header = () => {
-    const isAuthenticated = true
-    const user = { fullName: "John", role: "employer"}
+    const {user, isAuthenticated} = useAuth()
     const navigate = useNavigate()
 
   return <motion.header
@@ -46,7 +46,7 @@ const Header = () => {
             <div className="flex items-center space-x-3">
                 {isAuthenticated ? (
                     <div className="flex items-center space-x-3">
-                        <span className="text-gray-700">Welcome, {user?.fullName}</span>
+                        <span className="text-gray-700">Welcome, {user?.name}</span>
                         <a 
                             href={user?.role === "employer" ? "/employer-dashboard" : '/find-jobs'}
                             className="bg-gradient-to-r from-teal-600 to-green-600 text-white px-6 py-2 rounded-lg font-medium hover:from-teal-700 hover:to-green-700 transition-all duration-300 shadow-sm hover:shadow-md"

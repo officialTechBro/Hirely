@@ -4,8 +4,13 @@ import { motion } from "framer-motion"
 import { User, Mail, Lock, Upload, Eye, EyeOff, UserCheck, Building2, CheckCircle, AlertCircle, Loader } from "lucide-react"
 import { validateEmail } from "../../utils/helper"
 import { validatePassword, validateAvatar } from "../../utils/helper"
+import uploadImage from "../../utils/uploadImage"
+import axiosInstance from "../../utils/axiosInstance"
+import { API_PATHS } from "../../utils/apiPath"
+import { useAuth } from "../../context/AuthContext"
 
 const SignUp = () => {
+    const {login} = useAuth()
     const [formData, setFormData] = useState({
       fullName: "",
       email: "",
@@ -39,7 +44,7 @@ const SignUp = () => {
                 ...prev,
                 errors: {
                     ...prev.errors,
-                    [name]: ''
+                    [name]: ""
                 }
             }))
         }
@@ -56,7 +61,7 @@ const SignUp = () => {
     }
 
     const handleAvatarChange = (e) => {
-      const file = e.target.files[0]
+      const file = e.target.files && e.target.files[0]
       if (file) {
         const error = validateAvatar(file)
 
@@ -77,7 +82,7 @@ const SignUp = () => {
         setFormState((prev) => ({
             ...prev,
             avatarPreview: e.target.result,
-            errors: {...prev.errors, avata: ""}
+            errors: {...prev.errors, avatar: ""}
         }))
       }
       reader.readAsDataURL(file)
@@ -92,7 +97,7 @@ const SignUp = () => {
             email: validateEmail(formData.email),
             password: validatePassword(formData.password),
             role: !formData.role ? "Please select a role" : "",
-            avatar: formData.avatar !== "null" ? validateAvatar(formData.avatar) : "",
+            avatar: formData.avatar !== null ? validateAvatar(formData.avatar) : "",
         }
 
         // Remove empty errors
@@ -105,7 +110,7 @@ const SignUp = () => {
         return Object.keys(errors).length === 0
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
 
         if (!validateForm()) return
@@ -114,7 +119,44 @@ const SignUp = () => {
 
         // Login API call
         try {
-            // API
+          let avatarUrl = ""
+
+          // upload image if present
+          if (formData.avatar) {
+            const imgUploadRes = await uploadImage(formData.avatar)
+            avatarUrl = imgUploadRes.imageUrl || ""
+          }
+
+           // API
+           const response = await axiosInstance.post(API_PATHS.AUTH.REGISTER, {
+            name: formData.fullName,
+            email: formData.email,
+            password: formData.password,
+            role: formData.role,
+            avatar: avatarUrl || "",
+           })
+
+           setFormState(prev => ({
+              ...prev,
+              loading: false,
+              success: true,
+              errors: {}
+          }))
+
+          const {token} = response.data 
+
+          if (token) {
+            login(response.data, token)
+
+                //Redirect based on role
+                setTimeout(() => {
+                    window.location.href = 
+                        formData.role === "employer"
+                            ? "/employer-dashboard"
+                            : "/find-jobs"
+                }, 2000)
+          }
+
         } catch (error) {
             setFormState(prev => ({
             ...prev,
