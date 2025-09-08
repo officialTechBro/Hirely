@@ -10,6 +10,8 @@ const __dirname = path.dirname(__filename);
 // @desc: Update users profile (name, avatar, company details)
 export const updateProfile = async (req, res) => {
     try {
+        const {name, avatar, companyName, companyLogo, companyDescription, resume} = req.body 
+
         const user = await User.findById(req.user._id)
         if (!user) return res.status(404).json({message: "User not found"})
 

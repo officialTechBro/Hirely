@@ -6,7 +6,7 @@ const userRoutes = Router()
 
 // Protected Route
 userRoutes.put("/profile", protect, updateProfile)
-userRoutes.post("/resume", protect, deleteResume)
+userRoutes.delete("/resume", protect, deleteResume)
 
 // Public Route
 userRoutes.get("/:id", getPublicProfile)
