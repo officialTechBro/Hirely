@@ -32,7 +32,7 @@ export const AuthProvider = ({children}) => {
             }
         } catch (error) {
             console.error("Auth check failed:", error )
-            logout()
+            // logout()
         } finally {
             setLoading(false)
         }

@@ -14,12 +14,12 @@ const ProfileDropDown = ({isOpen, onToggle, avatar, companyName, email, onLogout
                 <img 
                     src={avatar}
                     alt="avatar"
-                    className="h-9 w-9 pbject-cover rounded-xl"
+                    className="h-9 w-9 object-cover rounded-xl"
                 />
             ): (
                 <div className="h-8 w-8 bg-gradient-to-r from-teal-600 to-green-600 rounded-xl flex items-center justify-center">
                     <span className="text-white font-semibold text-sm">
-                        {companyName.chartAt(0).toUpperCase()}
+                        {companyName.charAt(0).toUpperCase()}
                     </span>
                 </div>
             )}
