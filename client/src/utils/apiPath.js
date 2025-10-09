@@ -14,23 +14,23 @@ export const API_PATHS = {
   },
 
   JOBS: {
-    GET_ALL_JOBS: "/api/jobs",
-    GET_JOB_BY_ID: (id) => `/api/jobs/${id}`,
+    GET_ALL_JOBS: "/api/job",
+    GET_JOB_BY_ID: (id) => `/api/job/${id}`,
     POST_JOB: "/api/job",
     GET_JOBS_EMPLOYER: "api/job/get-jobs-employer",
-    UPDATE_JOB: (id) => `/api/jobs/${id}`,
-    TOGGLE_CLOSE: (id) => `/api/jobs/${id}/toggle-close`,
-    DELETE_JOB: (id) => `/api/jobs/${id}`,
+    UPDATE_JOB: (id) => `/api/job/${id}`,
+    TOGGLE_CLOSE: (id) => `/api/job/${id}/toggle-close`,
+    DELETE_JOB: (id) => `/api/job/${id}`,
 
-    SAVE_JOB: (id) => `/api/save-jobs/${id}`,
-    UNSAVE_JOB: (id) => `/api/save-jobs/${id}`,
-    GET_SAVED_JOBS: "/api/save-jobs/my",
+    SAVE_JOB: (id) => `/api/save-job/${id}`,
+    UNSAVE_JOB: (id) => `/api/save-job/${id}`,
+    GET_SAVED_JOBS: "/api/save-job/my",
   },
 
   APPLICATIONS: {
-    APPLY_TO_JOB: (id) => `/api/applications/${id}`,             // Jobseeker applies
-    GET_ALL_APPLICATIONS: (id) => `/api/applications/job/${id}`, // Employer views applications for a job
-    UPDATE_STATUS: (id) => `/api/applications/${id}/status`,     // Employer updates application status
+    APPLY_TO_JOB: (id) => `/api/application/${id}`,             // Jobseeker applies
+    GET_ALL_APPLICATIONS: (id) => `/api/application/job/${id}`, // Employer views applications for a job
+    UPDATE_STATUS: (id) => `/api/application/${id}/status`,     // Employer updates application status
   },
 
   IMAGE: {
