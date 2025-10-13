@@ -206,7 +206,7 @@ const ApplicationViewer = () => {
         setSelectedApplicant={setSelectedApplicant}
         handleDownloadResume={handleDownloadResume}
         handleClose={() => {
-          selectedApplicant(null)
+          setSelectedApplicant(null)
           fetchApplications()
         }}
       />
