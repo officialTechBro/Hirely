@@ -30,6 +30,7 @@ const Card = ({title, headerAction, subtitle, className, children}) => {
   </div>
 }
 
+// eslint-disable-next-line no-unused-vars
 const StatCard = ({ title, value, icon: Icon, trend, trendValue, color = "blue" }) => {
   const colorClasses = {
     blue: "from-blue-500 to-blue-600",

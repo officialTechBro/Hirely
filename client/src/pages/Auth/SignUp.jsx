@@ -403,7 +403,7 @@ const SignUp = () => {
                     <p className="text-gray-600">
                         Already have an account? {'  '}
                         <a href="/login" className="text-teal-600 hover:text-teal-700 font-medium">
-                            Sign in here
+                            login here
                         </a>
                     </p>
                 </div>
