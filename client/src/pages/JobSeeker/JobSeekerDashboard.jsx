@@ -57,7 +57,11 @@ const JobSeekerDashboard = () => {
       if (filterParams.category) params.append("category", filterParams.category)
       if (user) params.append("userId", user?._id)
 
-      const response = await axiosInstance.get(`${API_PATHS.JOBS.GET_ALL_JOBS}?{params.toString()}`)
+      const qs = params.toString()
+      const url = `${API_PATHS.JOBS.GET_ALL_JOBS}${qs ? `?${qs}` : ""}`
+
+
+      const response = await axiosInstance.get(url)
 
       const jobsData = Array.isArray(response.data)
         ? response.data
@@ -76,7 +80,7 @@ const JobSeekerDashboard = () => {
 
   // fecth job when filter changes (debounce)
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
+      const timeoutId = setTimeout(() => {
       const apiFilters = {
         keyword: filters.keyword,
         location: filters.location,
@@ -89,11 +93,8 @@ const JobSeekerDashboard = () => {
       }
 
       // Only call API if there are meaningfull filters
-      const hasFilters = Object.values(apiFilters).some((value) =>
-        value !== "" &&
-        value !== false &&
-        value !== null &&
-        value !== undefined 
+      const hasFilters = Object.values(apiFilters).some(
+        (value) => value !== "" && value !== false && value !== null && value !== undefined
       )
 
       if (hasFilters) {
@@ -103,7 +104,8 @@ const JobSeekerDashboard = () => {
       }
     }, 500)
 
-    return () => clearTimeout()
+    return () => clearTimeout(timeoutId)
+
   }, [filters, user])
 
   const handleFilterChange = (key, value) => {
@@ -135,7 +137,7 @@ const JobSeekerDashboard = () => {
         className="fixed inset-0 bg-black/50"
         onClick={() => setShowMobileFilter(false)}
       />
-      <div className="fixed inset-y-0 right-0 w-full max-w-sm bg-white shadow-xl">
+      <div className="fixed inset-y-0 right-0 w-full max-w-xs bg-white shadow-xl">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h3 className="font-bold text-gray-900 text-lg">Filters</h3>
           <button
@@ -162,10 +164,10 @@ const JobSeekerDashboard = () => {
     try {
       if (isSaved) {
         await axiosInstance.delete(API_PATHS.JOBS.UNSAVE_JOB(jobId))
-        toast.success("Job removed Successfully")
+        toast.success("Job removed successfully")
       } else {
         await axiosInstance.post(API_PATHS.JOBS.SAVE_JOB(jobId))
-        toast.success("Job saved Successfully")
+        toast.success("Job saved successfully")
       }
 
       fetchJobs()
@@ -179,7 +181,7 @@ const JobSeekerDashboard = () => {
     try {
       if (jobId) {
         await axiosInstance.post(API_PATHS.APPLICATIONS.APPLY_TO_JOB(jobId))
-        toast.success("Applied to job Successfully")
+        toast.success("Applied to job successfully")
       } 
 
       fetchJobs()
@@ -190,13 +192,15 @@ const JobSeekerDashboard = () => {
     }
   }
 
-  if (jobs.length === 0 && loading) {
+  if (jobs.length !== 0 && loading) {
     return <LoadingSpinner />
   }
 
   return (
     <div className="bg-gradient-to-br from-teal-50 via-white to-purple-50">
       <Navbar />
+
+      <MobileFilterOverlay />
 
       <div className="min-h-screen mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-8">
@@ -214,7 +218,7 @@ const JobSeekerDashboard = () => {
                 <FilterContent
                   toggleSection={toggleSection}
                   clearAllFilters={clearAllFilters}
-                  expandedSections={expandSections}
+                  expandSections={expandSections}
                   filters={filters}
                   handleFilterChange={handleFilterChange}
                 />
@@ -234,7 +238,7 @@ const JobSeekerDashboard = () => {
                   </p>
                 </div>
                 
-                <div className="flex items-center justify-between lg:justify-end gap-4">
+                <div className="flex items-center justify-between lg:justify-end gap-4 my-4">
                   {/* Mobile Filter Button */}
                   <button
                     onClick={() => setShowMobileFilter(true)}
@@ -274,7 +278,7 @@ const JobSeekerDashboard = () => {
                     <Search className="w-16 h-16 mx-auto" />
                   </div>
                   <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-3">No jobs found</h3>
-                  <p className="text-gray-600 mb-6">Try adjusting your search criteria of filters</p>
+                  <p className="text-gray-600 mb-6">Try adjusting your search criteria or filters</p>
                   <button
                     onClick={clearAllFilters}
                     className="bg-teal-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-teal-700 transition-colors"
@@ -289,7 +293,7 @@ const JobSeekerDashboard = () => {
                     <JobCard 
                       key={job._id}
                       job={job}
-                      onClick={() => navigate('/job/${job._id')}
+                      onClick={() => navigate(`/job/${job._id}`)}
                       onToggleSave={() => toggleSaveJob(job._id, job.isSaved)}
                       onApply={() => applyJob(job._id)}
                     />
