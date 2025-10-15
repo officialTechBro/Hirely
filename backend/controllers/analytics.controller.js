@@ -2,7 +2,16 @@ import Job from "../models/Job.js";
 import Application from "../models/Application.js";
 
 const getTrend = (current, previous) => {
-  if (previous === 0) return current > 0 ? 100 : 0;
+  // If both are 0, no change
+  if (current === 0 && previous === 0) return 0;
+  
+  // If previous is 0 but current > 0, that's 100% increase
+  if (previous === 0 && current > 0) return 100;
+  
+  // If current is 0 but previous > 0, that's 100% decrease
+  if (current === 0 && previous > 0) return -100;
+  
+  // Normal percentage calculation
   return Math.round(((current - previous) / previous) * 100);
 };
 
@@ -40,7 +49,7 @@ export const getEmployerAnalytics = async (req, res) => {
     // Parallel counts
     const [
       totalActiveJobs,
-      totalApplication,
+      totalApplications,
       totalHired,
 
       // Trends: Active jobs created in windows
@@ -105,18 +114,18 @@ export const getEmployerAnalytics = async (req, res) => {
     ]);
 
     const activeJobTrend = getTrend(activeJobsLast7, activeJobsPrev7);
-    const applicantTrend = getTrend(applicationsLast7, applicationsPrev7);
+    const applicationTrend = getTrend(applicationsLast7, applicationsPrev7);
     const hiredTrend = getTrend(hiredLast7, hiredPrev7);
 
     return res.status(200).json({
       counts: {
         totalActiveJobs,
-        totalApplication,
+        totalApplications,  
         totalHired,
         trends: {
-          activeJob: activeJobTrend,
-          totalApplicants: applicantTrend,
-          totalHired: hiredTrend
+          activeJobs: activeJobTrend,   
+          applications: applicationTrend,
+          hired: hiredTrend             
         }
       },
       data: {
