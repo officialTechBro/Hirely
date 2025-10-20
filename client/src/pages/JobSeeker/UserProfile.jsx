@@ -53,10 +53,10 @@ const UserProfile = () => {
     if (file) {
       // create preview link
       const previewUrl = URL.createObjectURL(file)
-      handleInputChange(type, previewUrl)
+      handleInputChange(type, previewUrl) 
 
       // upload image
-      handleImageChange(file, type)
+      handleImageUpload(file, type)
     }
   }
 
