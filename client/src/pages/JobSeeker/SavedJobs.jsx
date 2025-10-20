@@ -6,7 +6,7 @@ import { API_PATHS } from "../../utils/apiPath"
 import { useState, useEffect } from "react"
 import Navbar from "../../components/Layouts/Navbar"
 import JobCard from "../../components/Cards/JobCard"
-// import toast from "react-hot-toast"
+import toast from "react-hot-toast"
 
 
 const SavedJobs = () => {
@@ -26,15 +26,16 @@ const SavedJobs = () => {
     }
   }
 
-  // const handleUnSavedJob =  async (jobId) => {
-  //   try {
-  //     await axiosInstance.delete(API_PATHS.JOBS.UNSAVE_JOB(jobId))
-  //     toast.success("Job removed successfully")
-  //     getSavedJobs()
-  //   } catch (error) {
-  //     toast.error("Something went wrong. Please try again")
-  //   }
-  // }
+  const handleUnSavedJob =  async (jobId) => {
+    try {
+      await axiosInstance.delete(API_PATHS.JOBS.UNSAVE_JOB(jobId))
+      toast.success("Job removed successfully")
+      getSavedJobs()
+    } catch (error) {
+      toast.error("Something went wrong. Please try again")
+      console.error(error)
+    }
+  }
 
   useEffect(() => {
     if (user) {
@@ -112,6 +113,8 @@ const SavedJobs = () => {
                         key={savedJob._id}
                         job={savedJob?.job}
                         onClick={() => navigate(`/job/${savedJob?.job._id}`)}
+                        onToggleSave={() => handleUnSavedJob(savedJob?.job._id)}
+                        saved
                       />
                     ))}
                   </div>

@@ -24,7 +24,7 @@ const ProfileDropDown = ({isOpen, onToggle, avatar, companyName, email, onLogout
                 </div>
             )}
             <div className="hidden sm:block text-left">
-                <p className="text-sm font-medium text-gray-900">{companyName}</p>
+                <p className="text-sm font-medium text-gray-900">{role}</p>
                 <p className="text-xs text-gray-500">{role}</p>
             </div>
             <ChevronDown className="h-4 w-4 text-gray-400" />
@@ -38,7 +38,7 @@ const ProfileDropDown = ({isOpen, onToggle, avatar, companyName, email, onLogout
                 </div>
 
                 <a 
-                    onClick={() => navigate(role === "jobSeeker" ? "/profile" : "/company-profile")}
+                    onClick={() => navigate(role === "jobseeker" ? "/profile" : "/company-profile")}
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                 >
                     View Profile
