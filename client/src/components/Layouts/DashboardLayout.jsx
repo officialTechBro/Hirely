@@ -16,7 +16,7 @@ const NavigationItem = ({ item, isActive, onClick, isCollapsed}) => {
                 : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
         }`}
     >
-        <Icon className={`h-5 w-5 flex-shrink-0 ${
+        <Icon className={`h-5 w-5 flex shrink-0 ${
             isActive ? "text-teal-600" : "text-gray-500"
         }`} />
 
