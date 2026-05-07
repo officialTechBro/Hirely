@@ -1,6 +1,7 @@
 import { Download, X } from "lucide-react"
 import { useState } from "react"
 import { getInitials } from "../../utils/helper"
+import UserAvatar from "../Globals/UserAvatar"
 import moment from "moment"
 import axiosInstance from "../../utils/axiosInstance"
 import { API_PATHS } from "../../utils/apiPath"
@@ -56,19 +57,14 @@ const ApplicationProfilePreview = ({selectedApplicant, setSelectedApplicant, han
         {/* Modal Content */}
         <div className="p-6">
             <div className="text-center mb-6">
-                {selectedApplicant.applicant?.avatar ? (
-                    <img 
-                        src={selectedApplicant.applicant.avatar}
-                        alt={selectedApplicant?.applicant?.name}
-                        className="h-20 w-20 rounded-full object-cover mx-auto" 
+                <div className="flex justify-center">
+                    <UserAvatar
+                        src={selectedApplicant.applicant?.avatar}
+                        name={selectedApplicant.applicant?.name || ""}
+                        className="h-20 w-20"
+                        textClassName="text-xl"
                     />
-                ) : (
-                    <div className="h-20 w-20 rounded-full bg-teal-100 flex items-center justify-center mx-auto">
-                        <span className="text-teal-600 font-semibold text-xl">
-                            {getInitials(selectedApplicant.applicant.name)}
-                        </span>
-                    </div>
-                )}
+                </div>
                 <h4 className="mt-4 text-xl font-semibold text-gray-900">{selectedApplicant.applicant.name}</h4>
                 <p className="text-gray-600">{selectedApplicant.applicant.email}</p>
             </div>

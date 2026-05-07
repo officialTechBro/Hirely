@@ -5,9 +5,9 @@ import DashboardLayout from "../../components/Layouts/DashboardLayout"
 import { API_PATHS } from "../../utils/apiPath"
 import moment from "moment"
 import { useLocation, useNavigate } from "react-router-dom"
-import { getInitials } from "../../utils/helper"
 import StatusBadge from "../../components/Layouts/StatusBadge"
 import ApplicationProfilePreview from "../../components/Cards/ApplicationProfilePreview"
+import UserAvatar from "../../components/Globals/UserAvatar"
 
 
 const ApplicationViewer = () => {
@@ -142,21 +142,11 @@ const ApplicationViewer = () => {
                     >
                       <div className="flex items-center gap-4">
                         {/* Avatar */}
-                        <div className="flex-shrink-0">
-                          {application.applicant.avatar ? (
-                            <img 
-                              src={application.applicant.avatar}
-                              alt={application.applicant.name}
-                              className="h-12 w-12 rounded-full object-cover"
-                            />
-                          ): (
-                            <div className="h-12 w-12 rounded-full bg-teal-100 flex items-center justify-center">
-                              <span className="text-teal-600 font-semibold">
-                                {getInitials(application.applicant.name)}
-                              </span>
-                            </div>
-                          )}
-                        </div>
+                        <UserAvatar
+                          src={application.applicant.avatar}
+                          name={application.applicant.name}
+                          className="h-12 w-12"
+                        />
 
                         {/* Applicant Information */}
                         <div className="min-w-0 flex-1">

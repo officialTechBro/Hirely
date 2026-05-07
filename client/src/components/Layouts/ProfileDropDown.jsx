@@ -1,5 +1,6 @@
 import { ChevronDown } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import UserAvatar from "../Globals/UserAvatar"
 
 
 const ProfileDropDown = ({isOpen, onToggle, avatar, companyName, email, onLogout, role}) => {
@@ -10,19 +11,7 @@ const ProfileDropDown = ({isOpen, onToggle, avatar, companyName, email, onLogout
             onClick={onToggle}
             className="flex items-center space-x-3 p-2 rounded-xl hover:bg-gray-50 transition-colors duration-200"
         >
-            {avatar ? (
-                <img 
-                    src={avatar}
-                    alt="avatar"
-                    className="h-9 w-9 object-cover rounded-xl"
-                />
-            ): (
-                <div className="h-8 w-8 bg-gradient-to-r from-teal-600 to-green-600 rounded-xl flex items-center justify-center">
-                    <span className="text-white font-semibold text-sm">
-                        {companyName.charAt(0).toUpperCase()}
-                    </span>
-                </div>
-            )}
+            <UserAvatar src={avatar} name={companyName} className="h-9 w-9" textClassName="text-sm" />
             <div className="hidden sm:block text-left">
                 <p className="text-sm font-medium text-gray-900">{companyName}</p>
                 <p className="text-xs text-gray-500">{role}</p>

@@ -7,6 +7,7 @@ import toast from "react-hot-toast"
 import uploadImage from "../../utils/uploadImage"
 import Navbar from "../../components/Layouts/Navbar"
 import { Link } from "react-router-dom"
+import UserAvatar from "../../components/Globals/UserAvatar"
 
 
 
@@ -128,10 +129,11 @@ const UserProfile = () => {
               <div className="space-y-6">
                 <div className="flex items-center space-x-4">
                   <div className="relative">
-                    <img 
+                    <UserAvatar
                       src={formData?.avatar}
-                      alt="Avatar" 
-                      className="w-20 h-20 rounded-full object-cover border-4 border-gray-200"
+                      name={formData?.name || user?.name || ""}
+                      className="w-20 h-20"
+                      textClassName="text-2xl"
                     />
                     {uploading?.avatar && (
                       <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center">
