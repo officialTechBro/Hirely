@@ -1,9 +1,11 @@
+import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
 import helmet from 'helmet'
 import rateLimit from 'express-rate-limit'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import connectDB from './config/db.js'
 import authRoutes from './routes/auth.routes.js'
 import userRoutes from './routes/user.routes.js'
 import jobRoutes from './routes/job.routes.js'
@@ -49,6 +51,16 @@ const apiLimiter = rateLimit({
 })
 
 app.use(express.json({ limit: '1mb' }))
+
+// Ensure DB is connected on every serverless invocation
+app.use(async (req, res, next) => {
+    try {
+        await connectDB()
+        next()
+    } catch (err) {
+        next(err)
+    }
+})
 
 app.get('/api/health', (req, res) => {
     res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() })
