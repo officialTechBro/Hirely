@@ -56,7 +56,9 @@ export const deleteResume = async (req, res) => {
 
         if (user.resume) {
             // Use the path stored on the user document — never trust user-supplied URLs
-            const uploadsDir = path.resolve(__dirname, '../uploads')
+            const uploadsDir = process.env.VERCEL
+                ? '/tmp'
+                : path.resolve(__dirname, '../uploads')
             const fileName = path.basename(user.resume)
             const filePath = path.resolve(uploadsDir, fileName)
 

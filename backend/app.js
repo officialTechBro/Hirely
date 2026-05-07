@@ -61,7 +61,8 @@ app.use('/api/application', apiLimiter, applicationRoutes)
 app.use('/api/save-job', apiLimiter, savedJobRoutes)
 app.use('/api/analytics', apiLimiter, analyticsRoute)
 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
+const uploadsDir = process.env.VERCEL ? '/tmp' : path.join(__dirname, 'uploads')
+app.use('/uploads', express.static(uploadsDir))
 
 app.use((req, res) => {
     res.status(404).json({ message: 'Route not found' })
