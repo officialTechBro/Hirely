@@ -5,12 +5,12 @@ import SavedJob from "../models/SavedJob.js"
 // @desc: Save a job
 export const saveJob = async (req, res) => {
     try {
-        const {jobId} = req.params
+        const { jobId } = req.params
         const exist = await SavedJob.findOne({
-            job: req.params.id,
+            job: jobId,
             jobseeker: req.user._id
         })
-        if (exist) return res.status(400).json({message: "Job already saved"}) 
+        if (exist) return res.status(400).json({message: "Job already saved"})
 
         const saved = await SavedJob.create({
             job: jobId,
@@ -18,7 +18,6 @@ export const saveJob = async (req, res) => {
         })
 
         res.status(201).json(saved)
-
     } catch (error) {
         res.status(500).json({message: "Failed to save job", error: error.message})
     }
@@ -27,10 +26,10 @@ export const saveJob = async (req, res) => {
 // @desc: Unsave a job
 export const unsavedJob = async (req, res) => {
     try {
-        await SavedJob.findOneAndDelete({job: req.params.jobId})
+        await SavedJob.findOneAndDelete({ job: req.params.jobId, jobseeker: req.user._id })
         res.status(200).json({message: "Job removed from saved list"})
     } catch (error) {
-        res.status(500).json({message: "Failed to removed saved job", error: error.message})
+        res.status(500).json({message: "Failed to remove saved job", error: error.message})
     }
 }
 

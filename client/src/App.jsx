@@ -19,9 +19,11 @@ import ManageJobs from './pages/Employer/ManageJobs'
 import ApplicationViewer from './pages/Employer/ApplicationViewer'
 import EmployerProfilePage from './pages/Employer/EmployerProfilePage'
 import { AuthProvider } from './context/AuthContext'
+import ErrorBoundary from './components/ErrorBoundary'
 
 const App = () => {
   return (
+    <ErrorBoundary>
     <AuthProvider>
       <Router>
         <Routes>
@@ -59,6 +61,7 @@ const App = () => {
         }}
       />
     </AuthProvider>
+    </ErrorBoundary>
   )
 }
 export default App

@@ -15,5 +15,10 @@ const jobSchema = new mongoose.Schema({
     timestamps: true
 })
 
+jobSchema.index({ company: 1 })
+jobSchema.index({ isClosed: 1, createdAt: -1 })
+jobSchema.index({ category: 1, type: 1 })
+jobSchema.index({ title: "text", description: "text" })
+
 const Job = mongoose.model("Job", jobSchema)
 export default Job

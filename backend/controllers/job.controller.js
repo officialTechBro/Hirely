@@ -19,7 +19,7 @@ export const createJob = async (req, res) => {
 
 
 
-// @desc: get all jobs 
+// @desc: get all jobs (paginated)
 export const getJobs = async (req, res) => {
     const {
         keyword,
@@ -28,78 +28,70 @@ export const getJobs = async (req, res) => {
         type,
         minSalary,
         maxSalary,
-        userId
+        userId,
+        page = 1,
+        limit = 20,
     } = req.query;
 
-    // Build query efficiently
+    const pageNum = Math.max(1, parseInt(page, 10) || 1)
+    const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10) || 20))
+    const skip = (pageNum - 1) * limitNum
+
     const query = { isClosed: false };
     if (keyword) query.title = { $regex: keyword, $options: "i" };
     if (location) query.location = { $regex: location, $options: "i" };
     if (category) query.category = category;
     if (type) query.type = type;
 
-    // if (minSalary || maxSalary) {
-    //     query.salary = {};
-    //     if (minSalary) query.salary.$gte = Number(minSalary);
-    //     if (maxSalary) query.salary.$lte = Number(maxSalary);
-    //     // Remove salary if no range specified
-    //     if (Object.keys(query.salary).length === 0) delete query.salary;
-    // }
-
     if (minSalary || maxSalary) {
         query.$and = []
-
-        if (minSalary) {
-            query.$and.push({ salaryMax: {$gte: Number(minSalary)}})
-        }
-        if (maxSalary) {
-            query.$and.push({ salaryMin: {$lte: Number(maxSalary)}})
-        }
-
-        if (query.$and.length === 0) {
-            delete query.$and
-        }
+        if (minSalary) query.$and.push({ salaryMax: { $gte: Number(minSalary) } })
+        if (maxSalary) query.$and.push({ salaryMin: { $lte: Number(maxSalary) } })
+        if (query.$and.length === 0) delete query.$and
     }
 
     try {
-        const jobs = await Job.find(query).populate("company", "name companyName companyLogo");
+        const [jobs, total] = await Promise.all([
+            Job.find(query)
+                .populate("company", "name companyName companyLogo")
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(limitNum),
+            Job.countDocuments(query),
+        ])
 
         let savedJobsIds = [];
         let appliedJobStatusMap = {};
 
-        // if (userId) {
-        //     // Fetch saved jobs and applications in parallel
-        //     const [savedJobs, applications] = await Promise.all([
-        //         SavedJob.find({ jobseeker: userId }).select("job"),
-        //         Application.find({ applicant: userId }).select("job status")
-        //     ]);
-        //     savedJobsIds = savedJobs.map(j => j.job.toString());
-        //     applications.forEach(app => {
-        //         appliedJobStatusMap[app.job.toString()] = app.status;
-        //     });
-        // }
-
         if (userId) {
-            const savedJobs = await SavedJob.find({jobSeeker: userId}).select("job")
+            const [savedJobs, applications] = await Promise.all([
+                SavedJob.find({ jobseeker: userId }).select("job"),
+                Application.find({ applicant: userId }).select("job status"),
+            ])
             savedJobsIds = savedJobs.map((s) => String(s.job))
-
-            const applications = await Application.find({applicant: userId}).select("job")
             applications.forEach((app) => {
                 appliedJobStatusMap[String(app.job)] = app.status
             })
         }
 
-        // Add isSaved and appliedStatus fields to each job
         const jobsWithMeta = jobs.map(job => {
             const jobId = String(job._id);
             return {
                 ...job.toObject(),
                 isSaved: savedJobsIds.includes(jobId),
-                appliedStatus: appliedJobStatusMap[jobId] || null
+                appliedStatus: appliedJobStatusMap[jobId] || null,
             };
         });
 
-        res.status(200).json(jobsWithMeta);
+        res.status(200).json({
+            jobs: jobsWithMeta,
+            pagination: {
+                total,
+                page: pageNum,
+                limit: limitNum,
+                totalPages: Math.ceil(total / limitNum),
+            },
+        });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -121,19 +113,18 @@ export const getJobsEmployer = async (req, res) => {
             .populate("company", "name companyName companyLogo")
             .lean() // lean() makes jobs plain JS objects so we can add new fields
 
-        // Count application for each Job
-        const jobsWithApplicationCounts = await Promise.all(
-            jobs.map(async (job) => {
-                const applicationCount = await Application.countDocuments({
-                    job: job._id
-                })
+        // Count applications for all jobs in a single aggregation
+        const jobIds = jobs.map(j => j._id)
+        const counts = await Application.aggregate([
+            { $match: { job: { $in: jobIds } } },
+            { $group: { _id: "$job", applicationCount: { $sum: 1 } } },
+        ])
+        const countMap = Object.fromEntries(counts.map(c => [String(c._id), c.applicationCount]))
 
-                return {
-                    ...job,
-                    applicationCount
-                }
-            })
-        )
+        const jobsWithApplicationCounts = jobs.map(job => ({
+            ...job,
+            applicationCount: countMap[String(job._id)] || 0,
+        }))
 
         res.status(200).json(jobsWithApplicationCounts)
     } catch (error) {

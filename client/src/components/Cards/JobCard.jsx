@@ -8,7 +8,7 @@ import StatusBadge from "../Layouts/StatusBadge"
 const JobCard = ({job, onClick, onToggleSave, onApply, saved, hideApply}) => {
     const {user} = useAuth()
 
-    const formatSalary = (min, max) => {
+    const formatSalary = (min) => {
             const formatNumber = (num) => {
             if (num >= 1000) return `${(num / 1000).toFixed(0)}k`
             return`$${num}`

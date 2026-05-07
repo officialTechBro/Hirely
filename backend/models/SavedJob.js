@@ -7,5 +7,8 @@ const savedJobSchema = new mongoose.Schema({
     timestamps: true
 })
 
+savedJobSchema.index({ jobseeker: 1, job: 1 }, { unique: true })
+savedJobSchema.index({ jobseeker: 1, createdAt: -1 })
+
 const SavedJob = mongoose.model("SavedJob", savedJobSchema)
 export default SavedJob

@@ -47,11 +47,6 @@ export const updateProfile = async (req, res) => {
 // @desc: Delete Resume file (Jobseeker only)
 export const deleteResume = async (req, res) => {
     try {
-        const {resumeUrl} = req.body 
-
-        // Extract filename from the URL
-        const fileName = resumeUrl?.split('/')?.pop()
-
         const user = await User.findById(req.user._id)
         if (!user) return res.status(404).json({message: "User not found"})
 
@@ -59,26 +54,22 @@ export const deleteResume = async (req, res) => {
             return res.status(403).json({message: "Only jobseeker can delete resume"})
         }
 
-        // Resove the full file path
-        const filePath = path.join(__dirname, '../uploads', fileName)
+        if (user.resume) {
+            // Use the path stored on the user document — never trust user-supplied URLs
+            const uploadsDir = path.resolve(__dirname, '../uploads')
+            const fileName = path.basename(user.resume)
+            const filePath = path.resolve(uploadsDir, fileName)
 
-        // Check if file exist in the path and delete
-        if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath) // Delete file
+            // Guard: ensure resolved path stays inside uploads/
+            if (filePath.startsWith(uploadsDir) && fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath)
+            }
         }
 
-        // try {
-        //     await fs.unlink(filePath);
-        // } catch (err) {
-        //     // Log but don't fail if file doesn't exist
-        //     console.warn(`File not found or already deleted: ${filePath}`);
-        // }
-
-        // Set user's resume to an empty string
         user.resume = ""
         await user.save()
 
-        res.status(200).json({message: "resume deleted successfully"})
+        res.status(200).json({message: "Resume deleted successfully"})
     } catch (error) {
         res.status(500).json({message: error.message})
     }

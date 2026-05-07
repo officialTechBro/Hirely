@@ -19,7 +19,6 @@ const JobSeekerDashboard = () => {
   const [loading, setLoading] = useState(false)
   const [viewMode, setViewMode] = useState("grid")
   const [showMobileFilter, setShowMobileFilter] = useState(false)
-  const [error, setError] = useState(null)
 
   const navigate = useNavigate()
 
@@ -44,7 +43,7 @@ const JobSeekerDashboard = () => {
   const fetchJobs = async (filterParams = {}) => {
     try {
       setLoading(true)
-      setError(null)
+
 
       // Build Query params
       const params = new URLSearchParams()
@@ -71,7 +70,6 @@ const JobSeekerDashboard = () => {
 
     } catch (error) {
         console.error("Error fetching jobs", error)
-        setError("Failed to fetch jobs. Please try again")
         setJobs([])
     } finally {
       setLoading(false)
