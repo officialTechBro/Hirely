@@ -117,24 +117,36 @@ const SignUp = () => {
 
         setFormState(prev => ({...prev, loading: true}))
 
-        // Login API call
         try {
-          let avatarUrl = ""
-
-          // upload image if present
-          if (formData.avatar) {
-            const imgUploadRes = await uploadImage(formData.avatar)
-            avatarUrl = imgUploadRes.imageUrl || ""
-          }
-
-           // API
+           // Register first so we have a token before any authenticated requests
            const response = await axiosInstance.post(API_PATHS.AUTH.REGISTER, {
             name: formData.fullName,
             email: formData.email,
             password: formData.password,
             role: formData.role,
-            avatar: avatarUrl || "",
+            avatar: "",
            })
+
+          const { token } = response.data
+
+          // Upload avatar now that we have a token
+          if (token && formData.avatar) {
+            try {
+              // Store token so axiosInstance attaches it on the upload request
+              localStorage.setItem("token", token)
+              const imgUploadRes = await uploadImage(formData.avatar)
+              const avatarUrl = imgUploadRes.imageUrl || ""
+              if (avatarUrl) {
+                await axiosInstance.put(API_PATHS.AUTH.UPDATE_PROFILE, {
+                  name: formData.fullName,
+                  avatar: avatarUrl,
+                })
+                response.data.avatar = avatarUrl
+              }
+            } catch {
+              // Avatar upload failing is non-fatal — continue with no avatar
+            }
+          }
 
            setFormState(prev => ({
               ...prev,
@@ -143,14 +155,12 @@ const SignUp = () => {
               errors: {}
           }))
 
-          const {token} = response.data 
-
           if (token) {
             login(response.data, token)
 
                 //Redirect based on role
                 setTimeout(() => {
-                    window.location.href = 
+                    window.location.href =
                         formData.role === "employer"
                             ? "/employer-dashboard"
                             : "/find-jobs"
@@ -162,7 +172,7 @@ const SignUp = () => {
             ...prev,
             loading: false,
             errors: {
-                submit: error.response?.data?.message || 'Login failed. Please check your credentials'
+                submit: error.response?.data?.message || 'Sign up failed. Please try again.'
             }
         }))
         }
