@@ -114,7 +114,7 @@ const EmployerDashboard = () => {
                 value={dashboardData?.counts?.totalHired || 0}
                 icon={CheckCircle2}
                 trend={true}
-                trendValue={`${dashboardData?.counts?.trends?.totalHired || 0}%`}
+                trendValue={`${dashboardData?.counts?.trends?.hired || 0}%`}
                 color="purple"
               />
             </div>
@@ -182,7 +182,7 @@ const EmployerDashboard = () => {
                     title: "Review Application",
                     icon: Users,
                     color: "bg-green-50 text-green-700",
-                    path: "/manage-job"
+                    path: "/manage-jobs"
                   },
                   {
                     title: "Company Settings",

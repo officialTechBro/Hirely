@@ -18,7 +18,7 @@ const ApplicationViewer = () => {
 
   const [applications, setApplications] = useState([])
   const [loading, setLoading] = useState(false)
-  const [selectedApplicant, setSelectedApplicant] = useState([])
+  const [selectedApplicant, setSelectedApplicant] = useState(null)
 
   const fetchApplications = async () => {
     try {

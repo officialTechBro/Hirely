@@ -401,7 +401,7 @@ const SignUp = () => {
                     {formState.loading ? (
                         <>
                             <Loader className="w-5 h-5 animate-spin" />
-                            <span>Signing In...</span>
+                            <span>Creating Account...</span>
                         </>
                     ): (
                         <span>Sign Up</span>

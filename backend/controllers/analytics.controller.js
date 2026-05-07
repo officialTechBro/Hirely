@@ -38,9 +38,9 @@ export const getEmployerAnalytics = async (req, res) => {
       return res.status(200).json({
         counts: {
           totalActiveJobs: 0,
-          totalApplication: 0,
+          totalApplications: 0,
           totalHired: 0,
-          trends: { activeJob: 0, totalApplicants: 0, totalHired: 0 }
+          trends: { activeJobs: 0, applications: 0, hired: 0 }
         },
         data: { recentJobs: [], recentApplications: [] }
       });

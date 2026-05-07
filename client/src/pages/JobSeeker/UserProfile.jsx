@@ -145,7 +145,7 @@ const UserProfile = () => {
                           <span className="sr-only">Choose avatar</span>
                           <input 
                             type="file"
-                            accept="/image/*"
+                            accept="image/*"
                             onChange={(e) => handleImageChange(e, "avatar")}
                             className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100 transition-colors"
                           />
@@ -184,7 +184,7 @@ const UserProfile = () => {
                         Link:{" "} 
                         <a 
                           href={user?.resume}
-                          target="_blatnk"
+                          target="_blank"
                           className="text-teal-500 underline cursor-pointer"
                         >
                           {user?.resume}
@@ -200,8 +200,9 @@ const UserProfile = () => {
                     <div>
                       <label className="block">
                         <span className="sr-only">Choose File</span>
-                        <input 
+                        <input
                           type="file"
+                          accept=".pdf,application/pdf"
                           onChange={(e) => handleImageChange(e, "resume")}
                           className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100 transition-colors"
                         />

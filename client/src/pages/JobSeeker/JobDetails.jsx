@@ -33,7 +33,7 @@ const JobDetails = () => {
     try {
       if (jobId) {
         await axiosInstance.post(API_PATHS.APPLICATIONS.APPLY_TO_JOB(jobId))
-        toast.success("Apllied to job successfully")
+        toast.success("Applied to job successfully")
       }
       getJobDetailsById()
     } catch (error) {
